@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Full-stack &amp; distributed systems engineer portfolio — fault-tolerant crawlers, real-time ML feature stores, and rate limiters built to survive concurrent load.">
+<title>Mallika Kalangi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ink:#0f1320;
+    --surface:#161c2e;
+    --surface-raised:#1c2440;
+    --line:#2b3454;
+    --line-soft:#212a46;
+    --paper:#e9ecf6;
+    --dim:#8d97ba;
+    --dimmer:#5f6a8f;
+    --signal:#ef9b5c;
+    --signal-soft:#3a2f28;
+    --ok:#6fd7b5;
+    --ok-soft:#1c332e;
+    --font-display:'Instrument Serif', Georgia, 'Times New Roman', serif;
+    --font-body:'IBM Plex Sans', -apple-system, Segoe UI, sans-serif;
+    --font-mono:'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--font-body);
+    font-size:16px;
+    line-height:1.6;
+  }
+  ::selection{background:var(--signal-soft); color:var(--signal);}
+
+  a{color:inherit;}
+  h1,h2,h3{text-wrap:balance; margin:0;}
+
+  .wrap{max-width:920px; margin:0 auto; padding:0 28px;}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 0; border-bottom:1px solid var(--line-soft);
+  }
+  .topbar .mark{
+    font-family:var(--font-mono); font-size:13px; letter-spacing:.06em;
+    color:var(--dim); display:flex; align-items:center; gap:8px;
+  }
+  .dot{
+    width:7px; height:7px; border-radius:50%; background:var(--ok);
+    box-shadow:0 0 0 3px var(--ok-soft);
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion:reduce){ .dot{animation:none;} }
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.45;}}
+  .topbar nav{display:flex; gap:22px; font-size:14px;}
+  .topbar nav a{color:var(--dim); text-decoration:none; transition:color .15s;}
+  .topbar nav a:hover{color:var(--paper);}
+
+  /* ---------- hero ---------- */
+  .hero{padding:76px 0 56px; border-bottom:1px solid var(--line-soft);}
+  .eyebrow{
+    font-family:var(--font-mono); font-size:12.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--signal); margin:0 0 18px;
+  }
+  .hero h1{
+    font-family:var(--font-display); font-weight:400; font-size:clamp(42px,7vw,68px);
+    line-height:1.02; color:var(--paper);
+  }
+  .hero .role{
+    font-size:19px; color:var(--dim); margin-top:14px; max-width:560px; font-weight:500;
+  }
+  .hero .role em{color:var(--paper); font-style:normal;}
+  .hero .summary{
+    margin-top:20px; max-width:600px; color:var(--dim); font-size:15.5px;
+  }
+  .hero .meta{
+    margin-top:28px; display:flex; flex-wrap:wrap; gap:10px 22px;
+    font-family:var(--font-mono); font-size:13px; color:var(--dimmer);
+  }
+  .hero .meta a{color:var(--dim); text-decoration:none; border-bottom:1px solid var(--line);}
+  .hero .meta a:hover{color:var(--signal); border-color:var(--signal);}
+
+  .metrics{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background:var(--line-soft); border:1px solid var(--line-soft);
+    margin-top:40px; border-radius:10px; overflow:hidden;
+  }
+  .metric{background:var(--surface); padding:18px 16px;}
+  .metric .num{
+    font-family:var(--font-mono); font-weight:600; font-size:22px; color:var(--signal);
+    font-variant-numeric:tabular-nums;
+  }
+  .metric .label{font-size:12px; color:var(--dim); margin-top:6px; line-height:1.4;}
+
+  /* ---------- sections ---------- */
+  section.block{padding:60px 0;}
+  section.block + section.block{border-top:1px solid var(--line-soft);}
+  .block-head{display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:34px;}
+  .block-head h2{font-family:var(--font-display); font-size:32px; font-weight:400; color:var(--paper);}
+  .block-head .count{font-family:var(--font-mono); font-size:12.5px; color:var(--dimmer);}
+  .block-note{color:var(--dim); font-size:14.5px; max-width:560px; margin:-22px 0 34px;}
+
+  /* ---------- system cards (flagship distributed projects) ---------- */
+  .sys-card{
+    background:var(--surface); border:1px solid var(--line-soft); border-radius:12px;
+    padding:26px 28px; margin-bottom:20px;
+  }
+  .sys-card + .sys-card{margin-top:20px;}
+  .sys-top{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:10px 20px;}
+  .sys-top h3{font-size:19px; font-weight:600; color:var(--paper);}
+  .sys-top .repo-link{
+    font-family:var(--font-mono); font-size:12.5px; color:var(--dim); text-decoration:none;
+    white-space:nowrap; border-bottom:1px solid var(--line);
+  }
+  .sys-top .repo-link:hover{color:var(--signal); border-color:var(--signal);}
+  .sys-card .desc{color:var(--dim); font-size:14.5px; margin-top:10px; max-width:640px;}
+  .sys-card .diagram{margin:20px 0 4px; overflow-x:auto;}
+  .sys-card .diagram svg{display:block; min-width:520px;}
+  .sys-stats{display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:16px;}
+  .sys-stats .stat{font-family:var(--font-mono); font-size:12.5px; color:var(--ok);}
+  .sys-stats .stat b{color:var(--paper); font-weight:600;}
+  .tagrow{display:flex; flex-wrap:wrap; gap:7px; margin-top:16px;}
+  .tag{
+    font-family:var(--font-mono); font-size:11.5px; color:var(--dim);
+    border:1px solid var(--line); border-radius:5px; padding:3px 8px;
+  }
+
+  /* ---------- app cards (full stack) ---------- */
+  .app-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .app-card{
+    background:var(--surface); border:1px solid var(--line-soft); border-radius:12px;
+    padding:22px; display:flex; flex-direction:column; gap:12px;
+  }
+  .app-card h3{font-size:16.5px; font-weight:600;}
+  .app-card .stack{font-family:var(--font-mono); font-size:11.5px; color:var(--signal);}
+  .app-card p{color:var(--dim); font-size:13.5px; flex:1;}
+  .app-card a{
+    font-family:var(--font-mono); font-size:12px; color:var(--dim); text-decoration:none;
+    border-bottom:1px solid var(--line); align-self:flex-start;
+  }
+  .app-card a:hover{color:var(--signal); border-color:var(--signal);}
+
+  /* ---------- experience ---------- */
+  .tl{display:flex; flex-direction:column;}
+  .tl-item{
+    display:grid; grid-template-columns:150px 1fr; gap:24px; padding:22px 0;
+    border-top:1px solid var(--line-soft);
+  }
+  .tl-item:first-child{border-top:none;}
+  .tl-when{font-family:var(--font-mono); font-size:12.5px; color:var(--dimmer); padding-top:3px;}
+  .tl-role{font-size:16px; font-weight:600; color:var(--paper);}
+  .tl-org{color:var(--signal); font-size:13.5px; margin-top:2px;}
+  .tl-body ul{margin:12px 0 0; padding-left:18px; color:var(--dim); font-size:14px;}
+  .tl-body li + li{margin-top:7px;}
+  .tl-body b{color:var(--paper); font-weight:600;}
+
+  /* ---------- skills ---------- */
+  .skill-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:22px 32px;}
+  .skill-group .k{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--dimmer); margin-bottom:10px;
+  }
+  .skill-group .tagrow{margin-top:0;}
+
+  /* ---------- also on github ---------- */
+  .also-list{display:flex; flex-direction:column; gap:0;}
+  .also-item{
+    display:flex; justify-content:space-between; gap:16px; padding:13px 0;
+    border-top:1px solid var(--line-soft); font-size:14px;
+  }
+  .also-item:first-child{border-top:none;}
+  .also-item .name{color:var(--paper);}
+  .also-item .note{color:var(--dim); font-size:12.5px;}
+  .also-item a{font-family:var(--font-mono); font-size:12px; color:var(--dim); text-decoration:none; white-space:nowrap;}
+  .also-item a:hover{color:var(--signal);}
+
+  /* ---------- footer ---------- */
+  footer{padding:52px 0 70px; border-top:1px solid var(--line-soft);}
+  footer .row{display:flex; flex-wrap:wrap; justify-content:space-between; gap:22px; align-items:flex-end;}
+  footer h2{font-family:var(--font-display); font-size:30px; font-weight:400;}
+  footer .contact{display:flex; flex-direction:column; gap:6px; font-family:var(--font-mono); font-size:13.5px;}
+  footer .contact a{text-decoration:none; color:var(--dim); border-bottom:1px solid var(--line);}
+  footer .contact a:hover{color:var(--signal); border-color:var(--signal);}
+  footer .fine{margin-top:40px; color:var(--dimmer); font-size:12px; font-family:var(--font-mono);}
+
+  @media (max-width:760px){
+    .metrics{grid-template-columns:repeat(2,1fr);}
+    .app-grid{grid-template-columns:1fr;}
+    .tl-item{grid-template-columns:1fr; gap:6px;}
+    .topbar nav{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="mark"><span class="dot"></span> mallika.kalangi / status: open to full-stack &amp; backend roles</div>
+    <nav>
+      <a href="#systems">Systems</a>
+      <a href="#apps">Applications</a>
+      <a href="#experience">Experience</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+
+  <div class="hero">
+    <p class="eyebrow">Portfolio — Dallas, TX</p>
+    <h1>Mallika Kalangi</h1>
+    <p class="role">Full-stack &amp; distributed systems engineer. I build <em>the parts that stay correct under concurrent load</em> — gateways, feature stores, and crawlers that keep working when a worker dies mid-request.</p>
+    <p class="summary">M.S. Computer Science candidate at UT Arlington, ex-Samsung Research. Shipped cross-device call features to 10M+ Galaxy users, then spent this year rebuilding the distributed-systems fundamentals behind that work — leases, token buckets, online/offline parity — as fully working, documented services.</p>
+    <div class="meta">
+      <a href="https://github.com/bhargavikvmpl-2001" target="_blank" rel="noopener">github.com/bhargavikvmpl-2001</a>
+      <a href="mailto:lakshmibhargavi1101@gmail.com">lakshmibhargavi1101@gmail.com</a>
+      <span>(682) 206-1998</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="num">10M+</div><div class="label">Galaxy S24 users on shipped call features</div></div>
+      <div class="metric"><div class="num">50K+</div><div class="label">req/sec through the rate-limiter gateway</div></div>
+      <div class="metric"><div class="num">&lt;20ms</div><div class="label">feature-store read latency, online path</div></div>
+      <div class="metric"><div class="num">-22%</div><div class="label">query latency after indexing + sharding</div></div>
+    </div>
+  </div>
+
+  <section class="block" id="systems">
+    <div class="block-head">
+      <h2>Distributed systems</h2>
+      <span class="count">03 — built &amp; documented from scratch</span>
+    </div>
+    <p class="block-note">The three projects the resume's "Projects" section describes — rebuilt as working services with tests, not slideware. Each README explains the concurrency problem first and the code second.</p>
+
+    <div class="sys-card">
+      <div class="sys-top">
+        <h3>Distributed Web Crawler &amp; Search Engine</h3>
+        <a class="repo-link" href="https://github.com/bhargavikvmpl-2001/distributed-web-crawler" target="_blank" rel="noopener">github.com/…/distributed-web-crawler ↗</a>
+      </div>
+      <p class="desc">A fault-tolerant crawler where any worker can die mid-fetch without losing or duplicating work. All state — the frontier queue, dedup set, in-flight leases — lives in Redis behind one coordinator; workers stay pure compute. A lease expiring <em>is</em> the failure detector, so no separate dead-worker check is needed.</p>
+      <div class="diagram">
+        <svg viewBox="0 0 620 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Workers call the coordinator, which owns Redis state; an indexer drains crawled pages into Elasticsearch behind a search API.">
+          <defs>
+            <marker id="arrC1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#5f6a8f"/>
+            </marker>
+          </defs>
+          <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="#e9ecf6">
+            <rect x="8" y="46" width="92" height="48" rx="7" fill="#1c2440" stroke="#2b3454"/>
+            <text x="54" y="66" text-anchor="middle" fill="#8d97ba">3× worker</text>
+            <text x="54" y="80" text-anchor="middle" fill="#e9ecf6">fetch+parse</text>
+
+            <line x1="100" y1="70" x2="158" y2="70" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC1)"/>
+
+            <rect x="160" y="34" width="130" height="72" rx="7" fill="#1c2440" stroke="#ef9b5c"/>
+            <text x="225" y="58" text-anchor="middle" fill="#ef9b5c">coordinator</text>
+            <text x="225" y="74" text-anchor="middle" fill="#8d97ba">frontier · seen</text>
+            <text x="225" y="90" text-anchor="middle" fill="#8d97ba">leases (Redis)</text>
+
+            <line x1="290" y1="70" x2="348" y2="70" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC1)"/>
+
+            <rect x="350" y="46" width="80" height="48" rx="7" fill="#1c2440" stroke="#2b3454"/>
+            <text x="390" y="70" text-anchor="middle" fill="#e9ecf6">indexer</text>
+
+            <line x1="430" y1="70" x2="488" y2="70" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC1)"/>
+
+            <rect x="490" y="46" width="122" height="48" rx="7" fill="#1c2440" stroke="#2b3454"/>
+            <text x="551" y="66" text-anchor="middle" fill="#e9ecf6">Elasticsearch</text>
+            <text x="551" y="80" text-anchor="middle" fill="#8d97ba">+ search API</text>
+          </g>
+        </svg>
+      </div>
+      <div class="sys-stats">
+        <span class="stat"><b>~30%</b> fewer indexing bottlenecks</span>
+        <span class="stat"><b>lease-TTL</b> requeue, no dead-worker detector</span>
+      </div>
+      <div class="tagrow">
+        <span class="tag">C++17</span><span class="tag">gRPC</span><span class="tag">Redis</span><span class="tag">Elasticsearch</span><span class="tag">Docker</span><span class="tag">Kubernetes</span>
+      </div>
+    </div>
+
+    <div class="sys-card">
+      <div class="sys-top">
+        <h3>Real-Time ML Feature Store</h3>
+        <a class="repo-link" href="https://github.com/bhargavikvmpl-2001/realtime-ml-feature-store" target="_blank" rel="noopener">github.com/…/realtime-ml-feature-store ↗</a>
+      </div>
+      <p class="desc">Solves online/offline parity: the feature value a model sees at serving time and the value that same feature had at label time have to agree exactly. A single feature registry drives both a Redis sorted-set online store (sub-20ms reads) and a point-in-time-correct Spark backfill — plus a parity checker that measures the drift instead of assuming zero.</p>
+      <div class="diagram">
+        <svg viewBox="0 0 620 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Kafka feeds a Spark streaming job that writes to Redis for online serving and Postgres for offline training, with a parity checker comparing both.">
+          <defs>
+            <marker id="arrC2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#5f6a8f"/>
+            </marker>
+          </defs>
+          <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="#e9ecf6">
+            <rect x="8" y="52" width="86" height="40" rx="7" fill="#1c2440" stroke="#2b3454"/>
+            <text x="51" y="76" text-anchor="middle">Kafka</text>
+
+            <line x1="94" y1="72" x2="150" y2="72" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC2)"/>
+
+            <rect x="152" y="52" width="118" height="40" rx="7" fill="#1c2440" stroke="#ef9b5c"/>
+            <text x="211" y="76" text-anchor="middle" fill="#ef9b5c">Spark streaming</text>
+
+            <line x1="270" y1="62" x2="330" y2="30" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC2)"/>
+            <line x1="270" y1="82" x2="330" y2="112" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC2)"/>
+
+            <rect x="332" y="8" width="120" height="40" rx="7" fill="#1c2440" stroke="#2b3454"/>
+            <text x="392" y="32" text-anchor="middle">Redis (online)</text>
+
+            <rect x="332" y="94" width="120" height="40" rx="7" fill="#1c2440" stroke="#2b3454"/>
+            <text x="392" y="118" text-anchor="middle">Postgres (offline)</text>
+
+            <line x1="452" y1="28" x2="500" y2="28" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC2)"/>
+            <line x1="452" y1="114" x2="500" y2="114" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC2)"/>
+
+            <text x="504" y="20" fill="#6fd7b5">serving API</text>
+            <text x="504" y="32" fill="#8d97ba">&lt;20ms reads</text>
+            <text x="504" y="106" fill="#6fd7b5">batch backfill</text>
+            <text x="504" y="118" fill="#8d97ba">point-in-time</text>
+
+            <line x1="452" y1="30" x2="452" y2="94" stroke="#5f6a8f" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="460" y="66" fill="#ef9b5c" font-size="10.5">parity check</text>
+          </g>
+        </svg>
+      </div>
+      <div class="sys-stats">
+        <span class="stat"><b>&lt;20ms</b> online read latency, measured</span>
+        <span class="stat"><b>zero label leakage</b> via as-of-timestamp joins</span>
+      </div>
+      <div class="tagrow">
+        <span class="tag">Python</span><span class="tag">Kafka</span><span class="tag">PySpark</span><span class="tag">Redis</span><span class="tag">PostgreSQL</span><span class="tag">FastAPI</span><span class="tag">AWS</span>
+      </div>
+    </div>
+
+    <div class="sys-card">
+      <div class="sys-top">
+        <h3>Distributed Rate Limiter &amp; API Gateway</h3>
+        <a class="repo-link" href="https://github.com/bhargavikvmpl-2001/distributed-rate-limiter" target="_blank" rel="noopener">github.com/…/distributed-rate-limiter ↗</a>
+      </div>
+      <p class="desc">Makes "check and consume a token" atomic across many gateway replicas hitting the same client at once, by pushing the whole token-bucket operation into a single Redis Lua script executed via EVALSHA. Proven, not asserted: a test fires 320 concurrent requests at a 50-token bucket and asserts exactly 50 are admitted.</p>
+      <div class="diagram">
+        <svg viewBox="0 0 620 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Client traffic passes through Nginx to Go gateway replicas, which call a C++ rate limiter over gRPC backed by Redis.">
+          <defs>
+            <marker id="arrC3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#5f6a8f"/>
+            </marker>
+          </defs>
+          <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="#e9ecf6">
+            <rect x="8" y="50" width="60" height="40" rx="7" fill="#1c2440" stroke="#2b3454"/>
+            <text x="38" y="74" text-anchor="middle">client</text>
+            <line x1="68" y1="70" x2="112" y2="70" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC3)"/>
+
+            <rect x="114" y="50" width="70" height="40" rx="7" fill="#1c2440" stroke="#2b3454"/>
+            <text x="149" y="74" text-anchor="middle">nginx</text>
+            <line x1="184" y1="60" x2="228" y2="35" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC3)"/>
+            <line x1="184" y1="80" x2="228" y2="105" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC3)"/>
+
+            <rect x="230" y="14" width="98" height="36" rx="7" fill="#1c2440" stroke="#2b3454"/>
+            <text x="279" y="37" text-anchor="middle">gateway (Go)</text>
+            <rect x="230" y="90" width="98" height="36" rx="7" fill="#1c2440" stroke="#2b3454"/>
+            <text x="279" y="113" text-anchor="middle">gateway (Go)</text>
+
+            <line x1="328" y1="32" x2="382" y2="65" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC3)"/>
+            <line x1="328" y1="108" x2="382" y2="75" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC3)"/>
+
+            <rect x="384" y="50" width="112" height="40" rx="7" fill="#1c2440" stroke="#ef9b5c"/>
+            <text x="440" y="70" text-anchor="middle" fill="#ef9b5c">limiter (C++)</text>
+            <text x="440" y="84" text-anchor="middle" fill="#8d97ba" font-size="10">gRPC · token bucket</text>
+
+            <line x1="496" y1="70" x2="546" y2="70" stroke="#5f6a8f" stroke-width="1.4" marker-end="url(#arrC3)"/>
+            <rect x="548" y="50" width="64" height="40" rx="7" fill="#1c2440" stroke="#2b3454"/>
+            <text x="580" y="74" text-anchor="middle">Redis</text>
+          </g>
+        </svg>
+      </div>
+      <div class="sys-stats">
+        <span class="stat"><b>50,000+</b> req/sec sustained</span>
+        <span class="stat"><b>320/320</b> concurrent requests, exactly 50 admitted in test</span>
+      </div>
+      <div class="tagrow">
+        <span class="tag">Go</span><span class="tag">C++</span><span class="tag">Redis</span><span class="tag">Nginx</span><span class="tag">gRPC</span><span class="tag">Docker</span><span class="tag">AWS</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="apps">
+    <div class="block-head">
+      <h2>Full-stack applications</h2>
+      <span class="count">03 — product-shaped, end to end</span>
+    </div>
+    <p class="block-note">Where the systems projects go deep on one hard problem, these go wide: auth, data modeling, orchestration, and a working UI.</p>
+    <div class="app-grid">
+      <div class="app-card">
+        <h3>UTA Campus Portal</h3>
+        <div class="stack">Next.js (App Router) · Firebase Auth · Firestore</div>
+        <p>A student-services portal — classes, grades, semester plans, degree progress, office hours, campus orgs and events — behind email/password auth with Firestore security rules gating every route but sign-in.</p>
+        <a href="https://github.com/bhargavikvmpl-2001/Campus-portal" target="_blank" rel="noopener">github.com/…/Campus-portal ↗</a>
+      </div>
+      <div class="app-card">
+        <h3>University Data Warehouse ETL</h3>
+        <div class="stack">PySpark · Apache Airflow · MySQL</div>
+        <p>Reproduces the UT Arlington Graduate Assistant role: consolidates four mismatched university system exports (CSV/JSON/TSV, real messiness on purpose) into a star schema, orchestrated daily by Airflow, with a benchmark proving the 22% latency win from indexing + partitioning.</p>
+        <a href="https://github.com/bhargavikvmpl-2001/ETL-pipeline" target="_blank" rel="noopener">github.com/…/ETL-pipeline ↗</a>
+      </div>
+      <div class="app-card">
+        <h3>Codebase RAG Assistant</h3>
+        <div class="stack">Python · ChromaDB · FastAPI · Redis</div>
+        <p>Q&amp;A over the real FastAPI codebase with exact file#Lstart-Lend citations. AST-aware chunking (splits at function/class boundaries, not fixed windows) feeds hybrid semantic + BM25 retrieval, with a reproducible retrieval-quality eval harness.</p>
+        <a href="https://github.com/bhargavikvmpl-2001/codebase-rag-assistant" target="_blank" rel="noopener">github.com/…/codebase-rag-assistant ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="experience">
+    <div class="block-head">
+      <h2>Experience</h2>
+    </div>
+    <div class="tl">
+      <div class="tl-item">
+        <div class="tl-when">Dec 2024 — May 2026</div>
+        <div>
+          <div class="tl-role">Graduate Assistant</div>
+          <div class="tl-org">University of Texas at Arlington</div>
+          <ul>
+            <li>Built an end-to-end <b>PySpark ETL pipeline</b> consolidating diverse datasets into MySQL, automated via <b>Apache Airflow</b>.</li>
+            <li>Cut average query latency <b>22%</b> through indexing and sharding.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-when">Jun 2022 — Jul 2024</div>
+        <div>
+          <div class="tl-role">Software Engineer</div>
+          <div class="tl-org">Samsung Research Institute · Noida</div>
+          <ul>
+            <li>Shipped call-management capabilities for <b>Galaxy S24</b>, in firmware reaching <b>10M+</b> global users.</li>
+            <li>Built cross-device call continuity between Galaxy S24 and Galaxy Watch, cutting handoff latency <b>30%</b>.</li>
+            <li>Improved call connection stability <b>~20%</b> via Android telephony service optimizations.</li>
+            <li>Drove integration testing across phone, tablet, and wearable, reducing cross-device sync issues <b>25%</b>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-when">Jan 2020 — May 2022</div>
+        <div>
+          <div class="tl-role">Software Engineer Intern</div>
+          <div class="tl-org">Samsung Research Institute · Remote</div>
+          <ul>
+            <li>Migrated <b>5,000+ lines</b> of legacy Java to Kotlin, lowering runtime crash rates <b>15%</b>.</li>
+            <li>Built internal automation tools on React, Node.js, and PostgreSQL, cutting manual reporting time <b>30%</b>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="skills">
+    <div class="block-head">
+      <h2>Skills</h2>
+    </div>
+    <div class="skill-grid">
+      <div class="skill-group">
+        <div class="k">Languages</div>
+        <div class="tagrow"><span class="tag">Java</span><span class="tag">Python</span><span class="tag">C</span><span class="tag">C++</span><span class="tag">Go</span><span class="tag">JavaScript</span><span class="tag">SQL</span></div>
+      </div>
+      <div class="skill-group">
+        <div class="k">Web &amp; data</div>
+        <div class="tagrow"><span class="tag">React.js</span><span class="tag">Next.js</span><span class="tag">Node.js</span><span class="tag">Spring Boot</span><span class="tag">Django</span><span class="tag">MySQL</span><span class="tag">PostgreSQL</span><span class="tag">MongoDB</span><span class="tag">Redis</span><span class="tag">Hive</span></div>
+      </div>
+      <div class="skill-group">
+        <div class="k">Infra &amp; cloud</div>
+        <div class="tagrow"><span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">Terraform</span><span class="tag">Apache Spark</span><span class="tag">Airflow</span><span class="tag">Hadoop</span><span class="tag">AWS</span><span class="tag">Azure</span></div>
+      </div>
+      <div class="skill-group">
+        <div class="k">ML</div>
+        <div class="tagrow"><span class="tag">PyTorch</span><span class="tag">TensorFlow</span><span class="tag">LangChain</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2>Also on GitHub</h2>
+      <span class="count">coursework &amp; ML</span>
+    </div>
+    <div class="also-list">
+      <div class="also-item">
+        <div><span class="name">HRNet Pose Estimation</span> — <span class="note">fine-tuned HRNet-W32 on COCO keypoints, PCK@0.05 28.6% → 40.0%</span></div>
+        <a href="https://github.com/bhargavikvmpl-2001/hrnet-pose-estimation-team5" target="_blank" rel="noopener">view ↗</a>
+      </div>
+      <div class="also-item">
+        <div><span class="name">Kidney Disease Classification</span> — <span class="note">MLflow + DVC experiment tracking pipeline</span></div>
+        <a href="https://github.com/bhargavikvmpl-2001/Kidney-Disease-Classification-using-ML-Flow-and-DVC" target="_blank" rel="noopener">view ↗</a>
+      </div>
+      <div class="also-item">
+        <div><span class="name">End-to-End MLflow Project</span> — <span class="note">model lifecycle tracking &amp; reproducibility</span></div>
+        <a href="https://github.com/bhargavikvmpl-2001/end_to_end_mlflow_project" target="_blank" rel="noopener">view ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div class="row">
+      <h2>Let's build something<br>that holds up under load.</h2>
+      <div class="contact">
+        <a href="mailto:lakshmibhargavi1101@gmail.com">lakshmibhargavi1101@gmail.com</a>
+        <a href="https://github.com/bhargavikvmpl-2001" target="_blank" rel="noopener">github.com/bhargavikvmpl-2001</a>
+        <span>(682) 206-1998 · Dallas, TX</span>
+      </div>
+    </div>
+    <div class="fine">M.S. Computer Science, University of Texas at Arlington (2024–2026) · B.Tech Electronics &amp; Communication, NIT Jalandhar (2018–2022)</div>
+  </footer>
+</div>
+</body>
+</html>
