@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Mallika Kalangi — software engineer. Open source contributions to Cadence, Thanos, PyRIT, Jib, Skaffold and Backstage, plus distributed systems and full-stack projects.">
+<title>Mallika Kalangi · Contribution Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an ops console for one engineer, in the main portfolio's palette and type.
+   Header, KPI row, charts, a "service health" grid of upstream repos, merged work, projects, PR log, then experience. */
+:root {
+  --bg: #EEF0F1;
+  --surface: #FFFFFF;
+  --surface-2: #F7F8F9;
+  --ink: #1A1E24;
+  --muted: #5B6270;
+  --line: #DADFE3;
+  --ok: #1F7A70;
+  --ok-soft: #DCEEEC;
+  --warn: #A6721A;
+  --warn-soft: #F3E6CC;
+  --off: #7C8390;
+  --off-soft: #E9ECEF;
+  --del: #B7443B;
+  --f-display: "Fraunces", ui-serif, Georgia, serif;
+  --f-body: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10141B; --surface: #171C25; --surface-2: #1E2530; --ink: #E8E6E0; --muted: #98A0AC; --line: #262D39;
+    --ok: #59A79D; --ok-soft: #132625; --warn: #DFA53E; --warn-soft: #332A15; --off: #8A93A0; --off-soft: #1F2631; --del: #EE8A80;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10141B; --surface: #171C25; --surface-2: #1E2530; --ink: #E8E6E0; --muted: #98A0AC; --line: #262D39;
+  --ok: #59A79D; --ok-soft: #132625; --warn: #DFA53E; --warn-soft: #332A15; --off: #8A93A0; --off-soft: #1F2631; --del: #EE8A80;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; }
+a { color: inherit; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--ok); outline-offset: 2px; border-radius: 4px; }
+.link { text-decoration: none; border-bottom: 1px solid var(--muted); }
+.link:hover { color: var(--warn); border-color: var(--warn); }
+
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 56px; display: grid; gap: 30px; }
+
+/* header */
+.top { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; justify-content: space-between; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.who { min-width: 0; display: grid; gap: 8px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--f-display); font-weight: 600; font-size: clamp(34px, 5vw, 52px); line-height: 1.04; margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+.tagline { margin: 0; color: var(--muted); max-width: 62ch; font-size: 16px; }
+.meta { display: grid; gap: 10px; justify-items: end; }
+.pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 500; background: var(--ok-soft); color: var(--ok); }
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 2.4s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 50%, transparent); } 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+@media (prefers-reduced-motion: reduce) { .pill::before { animation: none; } }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.btns a { font-family: var(--f-mono); font-size: 13px; text-decoration: none; padding: 7px 13px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); transition: border-color .15s; }
+.btns a:hover { border-color: var(--muted); }
+.sync { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+
+/* panels */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; min-width: 0; }
+.head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+h2 { font-family: var(--f-display); font-weight: 600; font-size: 22px; margin: 0; }
+.sub { font-size: 13px; color: var(--muted); }
+
+/* KPI row */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.kpi { display: grid; gap: 4px; }
+.kpi .label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.kpi .val { font-family: var(--f-display); font-weight: 600; font-size: 42px; line-height: 1; font-variant-numeric: tabular-nums lining-nums; }
+.kpi .note { font-size: 13px; color: var(--muted); }
+.kpi.ok .val { color: var(--ok); }
+.kpi.warn .val { color: var(--warn); }
+
+/* charts */
+.charts { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 12px; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.sw.ok { background: var(--ok); } .sw.warn { background: var(--warn); } .sw.off { background: var(--off); }
+svg text { font-family: var(--f-mono); font-size: 11px; fill: var(--muted); }
+.langs { display: grid; gap: 12px; }
+.lang { display: grid; grid-template-columns: 88px minmax(0, 1fr) 28px; gap: 10px; align-items: center; font-size: 14px; }
+.lang .bar { height: 10px; border-radius: 3px; background: var(--off-soft); overflow: hidden; }
+.lang .bar i { display: block; height: 100%; background: var(--ok); border-radius: 3px; }
+.lang .n { font-family: var(--f-mono); font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+
+/* tiles */
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.tile-top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.mono-name { font-family: var(--f-mono); font-weight: 500; font-size: 14px; overflow-wrap: anywhere; text-decoration: none; }
+.mono-name:hover { color: var(--ok); }
+.small { font-family: var(--f-mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.tile p { margin: 0; font-size: 14px; color: var(--muted); }
+.dots { display: flex; gap: 5px; flex-wrap: wrap; }
+.dot { width: 14px; height: 14px; border-radius: 3px; }
+.dot.ok { background: var(--ok); } .dot.warn { background: var(--warn); } .dot.off { background: var(--off); }
+.foot { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; color: var(--muted); font-family: var(--f-mono); margin-top: auto; }
+.tile h3 { font-family: var(--f-body); font-size: 15.5px; font-weight: 600; margin: 0; line-height: 1.35; text-wrap: balance; }
+.diff { display: flex; gap: 12px; font-family: var(--f-mono); font-size: 12.5px; font-variant-numeric: tabular-nums; margin-top: auto; padding-top: 4px; color: var(--muted); }
+.add { color: var(--ok); } .del { color: var(--del); }
+
+/* projects */
+.metric { font-family: var(--f-display); font-weight: 600; font-size: 28px; line-height: 1; color: var(--warn); font-variant-numeric: lining-nums; }
+.metric small { display: block; font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 400; margin-top: 6px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-family: var(--f-mono); font-size: 12px; padding: 3px 8px; border-radius: 5px; background: var(--surface-2); border: 1px solid var(--line); }
+.tile.lead { border-color: color-mix(in srgb, var(--ok) 45%, var(--line)); }
+.flag { font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ok); }
+
+/* PR log */
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { font-family: var(--f-mono); font-size: 12.5px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip:hover:not([aria-pressed="true"]) { color: var(--ink); }
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 640px; }
+th { text-align: left; font-family: var(--f-mono); font-weight: 500; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--line); }
+td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td a { text-decoration: none; }
+td a:hover { color: var(--ok); text-decoration: underline; }
+td.date, td.repo { font-family: var(--f-mono); font-size: 12.5px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.status { display: inline-block; font-size: 12px; font-weight: 500; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.status.merged { background: var(--ok-soft); color: var(--ok); }
+.status.open { background: var(--warn-soft); color: var(--warn); }
+.status.closed { background: var(--off-soft); color: var(--off); }
+
+/* experience + stack */
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.xp { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.xp li { display: grid; gap: 3px; }
+.xp .row { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.xp strong { font-weight: 600; }
+.xp span { font-size: 14px; color: var(--muted); }
+.xp .when { font-family: var(--f-mono); font-size: 12px; white-space: nowrap; }
+.stack { display: grid; gap: 14px; }
+.stack-row { display: grid; gap: 6px; }
+.k { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+footer { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); padding-top: 22px; font-family: var(--f-mono); font-size: 13px; }
+footer .fine { color: var(--muted); font-size: 12px; flex-basis: 100%; }
+
+@media (max-width: 880px) {
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .charts, .two { grid-template-columns: minmax(0, 1fr); }
+  .grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .meta { justify-items: start; }
+  .btns { justify-content: flex-start; }
+}
+@media (max-width: 560px) {
+  .grid3 { grid-template-columns: minmax(0, 1fr); }
+  .kpi .val { font-size: 34px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="who">
+      <div class="eyebrow">Software Engineer · Distributed Systems &amp; Open Source</div>
+      <h1>Mallika Kalangi</h1>
+      <p class="tagline">I fix correctness bugs in infrastructure that other companies run in production: workflow engines, metrics stores, container build tools and AI security frameworks. Before that I shipped call-continuity features to 10M+ Samsung Galaxy users.</p>
+    </div>
+    <div class="meta">
+      <span class="pill">Open to Software Engineer roles</span>
+      <div class="btns">
+        <a href="mailto:lakshmibhargavi1101@gmail.com">Email</a>
+        <a href="https://github.com/bhargavikvmpl-2001" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/mallika-kalangi/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://bhargavikvmpl-2001.github.io/portfolio/">Full portfolio</a>
+      </div>
+      <div class="sync">source: GitHub API · synced 16 Oct 2026</div>
+    </div>
+  </header>
+
+  <section class="kpis" aria-label="Summary">
+    <div class="panel kpi"><span class="label">Upstream PRs</span><span class="val" id="k-total">19</span><span class="note">across 9 projects</span></div>
+    <div class="panel kpi ok"><span class="label">Merged</span><span class="val" id="k-merged">6</span><span class="note">Microsoft, Cadence, mp-units</span></div>
+    <div class="panel kpi warn"><span class="label">In review</span><span class="val" id="k-open">11</span><span class="note">Thanos, Jib, Skaffold, Backstage…</span></div>
+    <div class="panel kpi"><span class="label">Stars across repos</span><span class="val">142k</span><span class="note">Go, Python, Java, TypeScript, C++</span></div>
+  </section>
+
+  <section class="charts">
+    <div class="panel">
+      <div class="head">
+        <h2>PRs by project</h2>
+        <div class="legend"><span><i class="sw ok"></i>Merged</span><span><i class="sw warn"></i>In review</span><span><i class="sw off"></i>Closed</span></div>
+      </div>
+      <svg id="chart" viewBox="0 0 520 210" width="100%" role="img" aria-label="Pull requests per project, stacked by status"></svg>
+    </div>
+    <div class="panel">
+      <div class="head"><h2>PRs by language</h2><span class="sub">of 19</span></div>
+      <div class="langs" id="langs"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="head">
+      <h2>Service health</h2>
+      <span class="sub">One tile per upstream project. Each square is one of my PRs.</span>
+    </div>
+    <div class="grid3" id="svc"></div>
+  </section>
+
+  <section>
+    <div class="head">
+      <h2>Merged upstream</h2>
+      <span class="sub">Accepted by project maintainers</span>
+    </div>
+    <div class="grid3" id="ship"></div>
+  </section>
+
+  <section>
+    <div class="head">
+      <h2>Projects</h2>
+      <span class="sub">Systems I designed and built end to end</span>
+    </div>
+    <div class="grid3">
+      <article class="tile lead">
+        <div class="tile-top"><a class="mono-name" href="https://github.com/bhargavikvmpl-2001/inventory-management-system" target="_blank" rel="noopener">inventory-management-system</a><span class="flag">Retail</span></div>
+        <div class="metric">0 oversells<small>50 buyers racing for 1 unit, tested</small></div>
+        <p>Spring Boot 3 REST API with JWT auth and role-based access, plus a React 18 SPA. Stock is taken with one conditional UPDATE, so the database gives the last unit to exactly one buyer. Idempotency keys stop double-click duplicate orders. CI runs the concurrency tests on PostgreSQL.</p>
+        <div class="tags"><span class="tag">Java 17</span><span class="tag">Spring Boot 3</span><span class="tag">PostgreSQL</span><span class="tag">Flyway</span><span class="tag">React 18</span><span class="tag">Docker</span></div>
+      </article>
+      <article class="tile">
+        <div class="tile-top"><a class="mono-name" href="https://github.com/bhargavikvmpl-2001/distributed-rate-limiter" target="_blank" rel="noopener">distributed-rate-limiter</a></div>
+        <div class="metric">50K+ req/s<small>Through Redis-backed counters</small></div>
+        <p>Global rate limiting and API gateway using token-bucket and sliding-window algorithms over distributed counters.</p>
+        <div class="tags"><span class="tag">Go</span><span class="tag">C++</span><span class="tag">Redis</span><span class="tag">gRPC</span></div>
+      </article>
+      <article class="tile">
+        <div class="tile-top"><a class="mono-name" href="https://github.com/bhargavikvmpl-2001/realtime-ml-feature-store" target="_blank" rel="noopener">realtime-ml-feature-store</a></div>
+        <div class="metric">&lt;20 ms<small>Online feature lookups</small></div>
+        <p>Low-latency feature platform for real-time inference, with matching online and offline feature definitions.</p>
+        <div class="tags"><span class="tag">Python</span><span class="tag">Kafka</span><span class="tag">Spark</span><span class="tag">Redis</span></div>
+      </article>
+      <article class="tile">
+        <div class="tile-top"><a class="mono-name" href="https://github.com/bhargavikvmpl-2001/codebase-rag-assistant" target="_blank" rel="noopener">codebase-rag-assistant</a></div>
+        <div class="metric">150K+ lines<small>Indexed with line-level citations</small></div>
+        <p>Q&amp;A over FastAPI's source and docs. AST-aware chunking, hybrid vector and BM25 retrieval, swappable LLM providers, and a re-runnable retrieval eval harness.</p>
+        <div class="tags"><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">ChromaDB</span><span class="tag">Redis</span></div>
+      </article>
+      <article class="tile">
+        <div class="tile-top"><a class="mono-name" href="https://github.com/bhargavikvmpl-2001/distributed-web-crawler" target="_blank" rel="noopener">distributed-web-crawler</a></div>
+        <div class="metric">~30%<small>Fewer indexing bottlenecks</small></div>
+        <p>Fault-tolerant parallel crawler and ranking pipeline for large-scale indexing.</p>
+        <div class="tags"><span class="tag">C++</span><span class="tag">Redis</span><span class="tag">Elasticsearch</span><span class="tag">Kubernetes</span></div>
+      </article>
+      <article class="tile">
+        <div class="tile-top"><a class="mono-name" href="https://github.com/bhargavikvmpl-2001/ETL-pipeline" target="_blank" rel="noopener">ETL-pipeline</a></div>
+        <div class="metric">22%<small>Lower query latency at UTA</small></div>
+        <p>Consolidates four university systems (SIS, LMS, Registrar, Advising) into a partitioned MySQL warehouse with a daily Airflow DAG.</p>
+        <div class="tags"><span class="tag">PySpark</span><span class="tag">Airflow</span><span class="tag">MySQL</span></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="head">
+      <h2>Pull request log</h2>
+      <div class="chips" role="group" aria-label="Filter by status">
+        <button class="chip" id="f-all" data-f="all" aria-pressed="true" type="button">All</button>
+        <button class="chip" id="f-merged" data-f="merged" aria-pressed="false" type="button">Merged</button>
+        <button class="chip" id="f-open" data-f="open" aria-pressed="false" type="button">In review</button>
+        <button class="chip" id="f-closed" data-f="closed" aria-pressed="false" type="button">Closed</button>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Project</th><th>Change</th><th>Status</th></tr></thead>
+        <tbody id="log"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="two">
+    <div class="panel">
+      <div class="head"><h2>Experience</h2></div>
+      <ul class="xp">
+        <li><div class="row"><strong>Software Engineer · Samsung Research Institute</strong><span class="when">Jun 2022 – Jul 2024</span></div>
+          <span>Shipped call-management and cross-device call continuity between Galaxy S24 and Galaxy Watch for 10M+ users. Cut handoff latency 30% and improved call connection stability about 20%.</span></li>
+        <li><div class="row"><strong>Graduate Assistant · UT Arlington</strong></div>
+          <span>Built the Airflow and PySpark warehouse pipeline behind a 22% query-latency improvement.</span></li>
+        <li><div class="row"><strong>Software Engineer Intern · Samsung Research Institute</strong></div>
+          <span>Next.js and Node.js on AWS, with Hive and PostgreSQL.</span></li>
+        <li><div class="row"><strong>M.S. Computer Science · UT Arlington</strong><span class="when">Aug 2024 – May 2026</span></div>
+          <span>CGPA 3.80/4.0</span></li>
+        <li><div class="row"><strong>B.Tech ECE · NIT Jalandhar</strong><span class="when">Aug 2018 – May 2022</span></div></li>
+      </ul>
+    </div>
+    <div class="panel">
+      <div class="head"><h2>Stack</h2></div>
+      <div class="stack">
+        <div class="stack-row"><span class="k">Languages</span><div class="tags"><span class="tag">Java</span><span class="tag">Go</span><span class="tag">Python</span><span class="tag">C++</span><span class="tag">JavaScript / TypeScript</span><span class="tag">Kotlin</span><span class="tag">SQL</span></div></div>
+        <div class="stack-row"><span class="k">Backend &amp; web</span><div class="tags"><span class="tag">Spring Boot</span><span class="tag">Node.js</span><span class="tag">React</span><span class="tag">Next.js</span><span class="tag">gRPC</span><span class="tag">REST</span></div></div>
+        <div class="stack-row"><span class="k">Data &amp; streaming</span><div class="tags"><span class="tag">Kafka</span><span class="tag">Spark</span><span class="tag">Airflow</span><span class="tag">PostgreSQL</span><span class="tag">MySQL</span><span class="tag">Redis</span><span class="tag">MongoDB</span><span class="tag">Cassandra</span></div></div>
+        <div class="stack-row"><span class="k">Cloud &amp; infra</span><div class="tags"><span class="tag">Kubernetes</span><span class="tag">Docker</span><span class="tag">Terraform</span><span class="tag">AWS</span><span class="tag">Azure</span><span class="tag">Prometheus</span></div></div>
+        <div class="stack-row"><span class="k">AI</span><div class="tags"><span class="tag">RAG</span><span class="tag">LangChain</span><span class="tag">PyTorch</span><span class="tag">TensorFlow</span><span class="tag">LLM red-teaming</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <a class="link" href="mailto:lakshmibhargavi1101@gmail.com">lakshmibhargavi1101@gmail.com</a>
+    <a class="link" href="https://github.com/bhargavikvmpl-2001" target="_blank" rel="noopener">github.com/bhargavikvmpl-2001</a>
+    <a class="link" href="https://www.linkedin.com/in/mallika-kalangi/" target="_blank" rel="noopener">linkedin.com/in/mallika-kalangi</a>
+    <span class="sub">Dallas, TX</span>
+    <span class="fine">PR counts, statuses and diff sizes come from the GitHub API as of 16 Oct 2026. Every row links to the PR.</span>
+  </footer>
+</div>
+
+<script>
+const REPOS = {
+  "cadence-workflow/cadence":             { stars: 9494,  lang: "Go",         domain: "Fault-tolerant workflow orchestration engine, created at Uber" },
+  "cadence-workflow/cadence-java-client": { stars: 155,   lang: "Java",       domain: "Java SDK for Cadence workflows" },
+  "thanos-io/thanos":                     { stars: 14238, lang: "Go",         domain: "Highly available Prometheus metrics at global scale (CNCF)" },
+  "microsoft/PyRIT":                      { stars: 4635,  lang: "Python",     domain: "Microsoft's red-teaming framework for generative AI" },
+  "GoogleContainerTools/skaffold":        { stars: 15900, lang: "Go",         domain: "Google's build and deploy loop for Kubernetes" },
+  "GoogleContainerTools/jib":             { stars: 14455, lang: "Java",       domain: "Google's Dockerless container builds for Java" },
+  "backstage/backstage":                  { stars: 34633, lang: "TypeScript", domain: "Developer portal platform from Spotify (CNCF)" },
+  "apache/airflow":                       { stars: 47192, lang: "Python",     domain: "Workflow scheduling for data pipelines" },
+  "mpusz/mp-units":                       { stars: 1491,  lang: "C++",        domain: "Compile-time units library, basis for a C++ standard proposal" }
+};
+
+const PRS = [
+  ["backstage/backstage", 36216, "open", "2026-10-15", "techdocs: keep table of contents aligned with docs container on wide screens"],
+  ["cadence-workflow/cadence", 8643, "open", "2026-10-13", "fix(history): adopt child workflow already started by parent after failover"],
+  ["cadence-workflow/cadence", 8625, "merged", "2026-10-08", "fix(dynamicconfig): accept the int default in config store GetIntValue"],
+  ["cadence-workflow/cadence", 8624, "open", "2026-10-08", "fix(history): validate retry policy jitter coefficient on ContinueAsNew"],
+  ["thanos-io/thanos", 9068, "open", "2026-10-06", "query: keep PromQL annotations from remote engines recognizable"],
+  ["thanos-io/thanos", 9067, "open", "2026-10-05", "receive: fail fast while an existing tenant's TSDB replays its WAL"],
+  ["cadence-workflow/cadence-java-client", 1103, "open", "2026-10-05", "feat(client): add cronOverlapPolicy and activeClusterSelectionPolicy to ChildWorkflowOptions"],
+  ["cadence-workflow/cadence-java-client", 1102, "open", "2026-10-05", "feat(client): add jitterStart, firstRunAt and cronOverlapPolicy to WorkflowOptions"],
+  ["cadence-workflow/cadence", 8611, "open", "2026-10-04", "fix(persistence): use conditional delete for orphan domain cleanup in Cassandra InsertDomain"],
+  ["cadence-workflow/cadence", 8610, "open", "2026-10-04", "fix(history): avoid data race when logging out-of-scope tasks in processing queue"],
+  ["GoogleContainerTools/jib", 4532, "open", "2026-09-29", "Only recognize instance main methods in instantiable classes"],
+  ["GoogleContainerTools/skaffold", 10195, "open", "2026-09-29", "fix(profiles): allow patches to add into empty maps and lists"],
+  ["microsoft/PyRIT", 2791, "merged", "2026-09-23", "FIX: report canonical technique identity for PromptInject run summaries"],
+  ["microsoft/PyRIT", 2741, "merged", "2026-09-22", "FIX: escape literal digits in DigitBijectionConverter to avoid token collision"],
+  ["microsoft/PyRIT", 2737, "closed", "2026-09-22", "FEAT: bound capped Scenario estimates without materializing datasets"],
+  ["microsoft/PyRIT", 2696, "merged", "2026-09-18", "FIX: escape literal apostrophes in DigitBijectionConverter to avoid case-marker collision"],
+  ["mpusz/mp-units", 836, "merged", "2026-09-14", "Run the CODATA generator check in CI via pre-commit"],
+  ["apache/airflow", 73137, "closed", "2026-09-14", "Remove dead cloudant_fake stub module"],
+  ["microsoft/PyRIT", 2657, "merged", "2026-09-14", "FIX: report Unicode tag presence correctly when decoding"]
+].map(([repo, num, status, date, title]) => ({ repo, num, status, date, title, url: `https://github.com/${repo}/pull/${num}` }));
+
+const SHIPPED = [
+  { repo: "cadence-workflow/cadence", num: 8625, merged: "12 Oct", lang: "Go", add: 85, del: 8, files: 2,
+    title: "Config store accepts an int default in GetIntValue",
+    body: "Dynamic config lookups that passed a plain int default were rejected by the config store's GetIntValue." },
+  { repo: "microsoft/PyRIT", num: 2791, merged: "26 Sep", lang: "Python", add: 237, del: 16, files: 5,
+    title: "Canonical technique identity in PromptInject run summaries",
+    body: "Attack run summaries now report one consistent technique identity, so results can be grouped and compared." },
+  { repo: "microsoft/PyRIT", num: 2741, merged: "30 Sep", lang: "Python", add: 122, del: 8, files: 4,
+    title: "Escape literal digits in DigitBijectionConverter",
+    body: "Digits already in the input could collide with encoded tokens. Escaping them makes the encoding reversible." },
+  { repo: "microsoft/PyRIT", num: 2696, merged: "21 Sep", lang: "Python", add: 109, del: 1, files: 4,
+    title: "Escape literal apostrophes in DigitBijectionConverter",
+    body: "Apostrophes in input text clashed with the converter's case marker. Same converter, a second collision class closed." },
+  { repo: "microsoft/PyRIT", num: 2657, merged: "14 Sep", lang: "Python", add: 38, del: 1, files: 2,
+    title: "Report Unicode tag presence correctly when decoding",
+    body: "The Unicode tag decoder misreported whether hidden tag characters were present in text." },
+  { repo: "mpusz/mp-units", num: 836, merged: "14 Sep", lang: "C++", add: 9, del: 0, files: 1,
+    title: "Run the CODATA generator check in CI",
+    body: "Wired the physical-constants generator check into pre-commit so CI catches drift automatically." }
+];
+
+const short = r => r.split("/")[1];
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const statusLabel = { merged: "Merged", open: "In review", closed: "Closed" };
+const dotClass = { merged: "ok", open: "warn", closed: "off" };
+const rank = { merged: 0, open: 1, closed: 2 };
+
+const count = s => PRS.filter(p => p.status === s).length;
+document.getElementById("k-total").textContent = PRS.length;
+document.getElementById("k-merged").textContent = count("merged");
+document.getElementById("k-open").textContent = count("open");
+
+// PRs per project, stacked by status (no dates)
+(function chart() {
+  const rows = Object.keys(REPOS).map(r => {
+    const mine = PRS.filter(p => p.repo === r);
+    return { name: short(r), merged: mine.filter(p => p.status === "merged").length,
+             open: mine.filter(p => p.status === "open").length, closed: mine.filter(p => p.status === "closed").length,
+             total: mine.length };
+  }).sort((a, b) => b.merged - a.merged || b.total - a.total);
+  const max = 6, x0 = 150, x1 = 500, top = 8, rowH = 22, bh = 14;
+  const h = top + rows.length * rowH + 24;
+  const x = v => x0 + (v / max) * (x1 - x0);
+  let s = "";
+  for (let t = 0; t <= max; t += 2) {
+    s += `<line x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${h - 22}" stroke="var(--line)" stroke-width="1"/>`;
+    s += `<text x="${x(t)}" y="${h - 6}" text-anchor="middle">${t}</text>`;
+  }
+  rows.forEach((d, i) => {
+    const y = top + i * rowH + (rowH - bh) / 2;
+    s += `<text x="${x0 - 10}" y="${y + bh - 3}" text-anchor="end" style="fill:var(--ink)">${esc(d.name)}</text>`;
+    let base = 0;
+    [["merged", "var(--ok)"], ["open", "var(--warn)"], ["closed", "var(--off)"]].forEach(([k, col]) => {
+      if (!d[k]) return;
+      s += `<rect x="${x(base) + (base ? 1 : 0)}" y="${y}" width="${x(base + d[k]) - x(base) - (base ? 1 : 0)}" height="${bh}" rx="2" fill="${col}"><title>${esc(d.name)}: ${d[k]} ${statusLabel[k].toLowerCase()}</title></rect>`;
+      base += d[k];
+    });
+    s += `<text x="${x(base) + 6}" y="${y + bh - 3}">${base}</text>`;
+  });
+  const svg = document.getElementById("chart");
+  svg.setAttribute("viewBox", `0 0 520 ${h}`);
+  svg.innerHTML = s;
+})();
+
+// Language bars
+(function langs() {
+  const by = {};
+  PRS.forEach(p => { const l = REPOS[p.repo].lang; by[l] = (by[l] || 0) + 1; });
+  const rows = Object.entries(by).sort((a, b) => b[1] - a[1]);
+  const max = rows[0][1];
+  document.getElementById("langs").innerHTML = rows.map(([l, n]) =>
+    `<div class="lang"><span>${l}</span><span class="bar"><i style="width:${(n / max) * 100}%"></i></span><span class="n">${n}</span></div>`).join("");
+})();
+
+// Service health tiles, ordered by merged then total
+(function svc() {
+  const merged = r => PRS.filter(p => p.repo === r && p.status === "merged").length;
+  const total = r => PRS.filter(p => p.repo === r).length;
+  const order = Object.keys(REPOS).sort((a, b) => merged(b) - merged(a) || total(b) - total(a));
+  document.getElementById("svc").innerHTML = order.map(r => {
+    const mine = PRS.filter(p => p.repo === r).sort((a, b) => rank[a.status] - rank[b.status]);
+    const meta = REPOS[r];
+    return `<article class="tile">
+      <div class="tile-top"><a class="mono-name" href="https://github.com/${r}" target="_blank" rel="noopener">${esc(r)}</a><span class="small">★ ${meta.stars.toLocaleString("en-US")}</span></div>
+      <p>${esc(meta.domain)}</p>
+      <div class="dots">${mine.map(p => `<a class="dot ${dotClass[p.status]}" href="${p.url}" target="_blank" rel="noopener" title="#${p.num} · ${statusLabel[p.status]}: ${esc(p.title)}" aria-label="PR ${p.num}, ${statusLabel[p.status]}"></a>`).join("")}</div>
+      <div class="foot"><span>${meta.lang}</span><span>${mine.length} PR${mine.length > 1 ? "s" : ""} · ${merged(r)} merged</span></div>
+    </article>`;
+  }).join("");
+})();
+
+// Merged cards
+document.getElementById("ship").innerHTML = SHIPPED.map(s => `
+  <article class="tile">
+    <span class="small">${esc(short(s.repo))} <a href="https://github.com/${s.repo}/pull/${s.num}" target="_blank" rel="noopener">#${s.num}</a></span>
+    <h3>${esc(s.title)}</h3>
+    <p>${esc(s.body)}</p>
+    <div class="diff"><span class="add">+${s.add}</span><span class="del">−${s.del}</span><span>${s.files} file${s.files > 1 ? "s" : ""}</span><span>${s.lang}</span></div>
+  </article>`).join("");
+
+// PR log with filter
+function renderLog(f) {
+  const rows = PRS.filter(p => f === "all" || p.status === f);
+  document.getElementById("log").innerHTML = rows.map(p => {
+    return `<tr><td class="repo">${esc(short(p.repo))}</td><td><a href="${p.url}" target="_blank" rel="noopener">${esc(p.title)}</a></td><td><span class="status ${p.status}">${statusLabel[p.status]}</span></td></tr>`;
+  }).join("");
+}
+document.querySelectorAll(".chip").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+  renderLog(btn.dataset.f);
+}));
+renderLog("all");
+</script>
+</body>
+</html>
